@@ -1,0 +1,38 @@
+EXPORT SS_FCO(A, B, C, D)
+BEGIN
+  LOCAL sz, sz2, i1, i2;
+  LOCAL V, Mt, M, CA, col_tmp;
+  LOCAL Q, Ax, Bx, Cx, Dx;
+  LOCAL coef_char;
+  
+  sz := DIM(A);
+  sz := sz[2];
+  V := mat2list(C);
+
+  FOR N FROM 1 TO (sz - 1) DO
+    CA := C*(A^N);
+    V:=concat(V,mat2list(CA));
+  END;
+  V:=list2mat(V,sz);
+
+  coef_char := mat2list(charpoly(A));
+  sz2 := SIZE(coef_char);
+  col_tmp := list_remove(coef_char,sz2);
+  col_tmp := list_remove(col_tmp,1);
+  col_tmp := concat(col_tmp,{1});
+  Mt := col_tmp;
+  
+  FOR i1 FROM 1 TO sz2-2 DO
+   col_tmp := list_remove(col_tmp,1);
+   col_tmp := concat(col_tmp,{0});
+   Mt := concat(Mt,col_tmp);
+  END;
+
+  M := list2mat(Mt,sz2-1);
+  Q := (M*V)^(-1);
+  Ax := Q^(-1)*A*Q;
+  Bx := Q^(-1)*B;
+  Cx := C*Q;
+  Dx := D;
+  RETURN {Ax,Bx,Cx,Dx};
+END;

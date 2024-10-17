@@ -1,0 +1,40 @@
+EXPORT SS_FCC(A, B, C, D)
+BEGIN
+  LOCAL sz, sz2, i1, i2, R;
+  LOCAL S, Mt, M, AB, col_tmp;
+  LOCAL P, Ax, Bx, Cx, Dx;
+  LOCAL coef_char;
+  
+  sz := DIM(A);
+  sz := sz[1];
+  S := mat2list(B);
+
+  FOR N FROM 1 TO (sz - 1) DO
+    R := DIM(S);
+    R := R[2];
+    AB := (A^N)*B;
+    S:=concat(S,mat2list(AB));
+  END;
+  S:=trn(list2mat(S,sz));
+
+  coef_char := mat2list(charpoly(A));
+  sz2 := SIZE(coef_char);
+  col_tmp := l_rem(coef_char,sz2);
+  col_tmp := l_rem(col_tmp,1);
+  col_tmp := concat(col_tmp,{1});
+  Mt := col_tmp;
+  
+  FOR i1 FROM 1 TO sz2-2 DO
+   col_tmp := l_rem(col_tmp,1);
+   col_tmp := concat(col_tmp,{0});
+   Mt := concat(Mt,col_tmp);
+  END;
+
+  M := list2mat(Mt,sz2-1);
+  P := S*M;
+  Ax := P^(-1)*A*P;
+  Bx := P^(-1)*B;
+  Cx := C*P;
+  Dx := D;
+  RETURN {Ax,Bx,Cx,Dx};
+END;
